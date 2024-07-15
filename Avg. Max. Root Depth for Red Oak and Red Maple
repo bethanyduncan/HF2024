@@ -1,0 +1,31 @@
+library(tidyverse)
+library(ggplot2)
+library(readr)
+library(dplyr) #install.packages("dplyr") in console 
+
+rootdata = read_csv("hf426-01-rsip.csv")
+#retrieved from https://harvardforest1.fas.harvard.edu/exist/apps/datasets/showData.html?id=HF426
+View(rootdata)
+
+#filtering for tree + species (red oak, red maple, hemlock, blackgum) + biome
+filteredroot = filter(rootdata, Growth_form == "Tree")
+filteredroot = filter(filteredroot, Species == "Acer rubrum" | Species == "Nyssa sylvatica" | 
+                        Species == "Tsuga canadensis" | Species == "Quercus rubra" &
+                        Biome == "Temperate Broadleaf & Mixed Forests")
+View(filteredroot)
+#only has data on red oak and red maple 
+
+#box plot for average Dr to visualize data better 
+#Dr: maximum rooting depth of plant (unit: meter / missing value: NA)
+ggplot(data=filteredroot)+
+  geom_boxplot(aes(x=Species, y=Dr))
+
+#return average maximum root depth for red oak and red maple
+#create two data frames of only one tree species type and convert to vectors 
+onlyoak = filter(filteredroot, Species == "Quercus rubra")
+oakDr = unlist(onlyoak$Dr)
+mean(oakDr)
+
+onlymaple = filter(filteredroot, Species == "Acer rubrum")
+mapleDr = unlist(onlymaple$Dr)
+mean(mapleDr)
